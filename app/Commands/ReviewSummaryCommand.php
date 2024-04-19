@@ -41,6 +41,6 @@ class ReviewSummaryCommand extends Command
         
         $this->info("!========= Review Summary Results =========!");
         $this->info($reviewSummary);
-        return ReviewSummaryCommand::SUCCESS;
+        return $reviewSummary;
     }
 }

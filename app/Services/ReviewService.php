@@ -22,7 +22,7 @@ class ReviewService
         }
 
         $result["total_reviews"] = $totalReviews;
-        $result["average_ratings"] = number_format(($totalRatings / $totalReviews), 1);
+        $result["average_ratings"] = (float) number_format(($totalRatings / $totalReviews), 1);
         $result = (object) array_merge($result, $ratingList);
 
         return $result;

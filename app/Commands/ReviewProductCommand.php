@@ -41,6 +41,6 @@ class ReviewProductCommand extends Command
         
         $this->info("!========= Review Products =========!");
         $this->info($productReviews);
-        return ReviewProductCommand::SUCCESS;
+        return $productReviews;
     }
 }
