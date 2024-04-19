@@ -4,6 +4,7 @@ namespace App\Commands;
 
 use App\Services\ReviewService;
 use LaravelZero\Framework\Commands\Command;
+use Illuminate\Support\Facades\Cache;
 
 class ReviewProductCommand extends Command
 {
@@ -29,8 +30,14 @@ class ReviewProductCommand extends Command
     public function handle()
     {
         try {
-            $data = ReviewService::getReviewByProductId($this->argument('productId'));
-            $productReviews = json_encode($data, JSON_PRETTY_PRINT);
+            $key = "product_{$this->argument('productId')}";
+            $data = Cache::get($key);
+            if (!$data) {
+                $data = ReviewService::getReviewByProductId($this->argument('productId'));
+                $data = json_encode($data, JSON_PRETTY_PRINT);
+                Cache::put($key, $data);
+            }
+
         } catch (Throwable $exception) {
             $this->warn(
                 string: $exception->getMessage(),
@@ -40,7 +47,7 @@ class ReviewProductCommand extends Command
         }
         
         $this->info("!========= Review Products =========!");
-        $this->info($productReviews);
-        return $productReviews;
+        $this->info($data);
+        return $data;
     }
 }

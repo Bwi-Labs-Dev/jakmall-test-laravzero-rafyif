@@ -4,6 +4,7 @@ namespace App\Commands;
 
 use App\Services\ReviewService;
 use LaravelZero\Framework\Commands\Command;
+use Illuminate\Support\Facades\Cache;
 
 class ReviewSummaryCommand extends Command
 {
@@ -29,8 +30,13 @@ class ReviewSummaryCommand extends Command
     public function handle()
     {
         try {
-            $data = ReviewService::getReviewSummary();
-            $reviewSummary = json_encode($data, JSON_PRETTY_PRINT);
+            $data = Cache::get('review_summary');
+            if (!$data) {
+                $data = ReviewService::getReviewSummary();
+                $data = json_encode($data, JSON_PRETTY_PRINT);
+                Cache::put('review_summary', $data);
+            }
+
         } catch (Throwable $exception) {
             $this->warn(
                 string: $exception->getMessage(),
@@ -40,7 +46,7 @@ class ReviewSummaryCommand extends Command
         }
         
         $this->info("!========= Review Summary Results =========!");
-        $this->info($reviewSummary);
-        return $reviewSummary;
+        $this->info($data);
+        return $data;
     }
 }
